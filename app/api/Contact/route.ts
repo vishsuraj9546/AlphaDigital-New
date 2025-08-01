@@ -40,10 +40,11 @@ export async function POST(req: Request) {
       `,
     });
 
+    // ✅ Success response
     return NextResponse.json({ success: true });
+
   } catch (error) {
     console.error('❌ API error:', error);
-
     return NextResponse.json(
       { success: false, error: 'Internal Server Error' },
       { status: 500 }

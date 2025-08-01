@@ -3,6 +3,9 @@
 @tailwind components;
 @tailwind utilities;
 @import 'aos/dist/aos.css';
+/* globals.css */
+
+
 
 @keyframes bounce-horizontal {
   0%, 100% { transform: translateX(0); }
