@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function CareersPage() {
   // 🟢 Form state
@@ -28,7 +29,7 @@ export default function CareersPage() {
     setLoading(true);
 
     try {
-      // ✅ Send data to Next.js API Route
+      // ✅ Send data to API Route
       const res = await fetch('/api/send-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -36,38 +37,64 @@ export default function CareersPage() {
       });
 
       if (res.ok) {
-        // ✅ Success alert
-        alert('✅ Application sent successfully! We’ll get back to you.');
-
-        // ✅ Reset form after success
-        setForm({ name: '', email: '', skill: '', message: '', resume: '' });
+        toast.success('✅ Application sent successfully! We’ll get back to you.');
+        setForm({ name: '', email: '', skill: '', message: '', resume: '' }); // reset form
       } else {
-        alert('❌ Something went wrong while sending the application.');
+        toast.error('❌ Something went wrong while sending the application.');
       }
     } catch (error) {
       console.error('Form submit error:', error);
-      alert('⚠️ Network Error! Please try again later.');
+      toast.error('⚠️ Network Error! Please try again later.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <section className="min-h-screen bg-black text-white flex items-center justify-center p-8">
-      <div className="w-full max-w-2xl bg-zinc-900 rounded-2xl shadow-lg p-8 border border-purple-500/30">
+    <section className="min-h-screen bg-black text-white flex items-center justify-center p-6 sm:p-8">
+      {/* ✅ Toast Notifications */}
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          style: {
+            background: '#111', // Dark background
+            color: '#fff',
+            fontWeight: 'bold',
+            borderRadius: '10px',
+            border: '1px solid #7C3AED', // Purple border
+            boxShadow: '0 0 15px rgba(124, 58, 237, 0.4)', // Purple glow
+            padding: '12px 16px',
+            fontSize: '15px',
+          },
+          success: {
+            iconTheme: {
+              primary: '#7C3AED',
+              secondary: '#fff',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#EF4444',
+              secondary: '#fff',
+            },
+          },
+        }}
+      />
 
+      {/* ✅ Main Card */}
+      <div className="w-full max-w-2xl bg-zinc-900 rounded-2xl shadow-lg p-6 sm:p-8 border border-purple-500/30">
+        
         {/* 🟣 Heading */}
-        <h1 className="text-4xl font-bold text-center mb-6">
+        <h1 className="text-3xl sm:text-4xl font-bold text-center mb-4 sm:mb-6">
           🚀 Join <span className="text-purple-400">AlphaDigital</span>
         </h1>
 
-        <p className="text-gray-400 text-center mb-8">
+        <p className="text-gray-400 text-center mb-6 sm:mb-8 text-sm sm:text-base">
           Fill the form below to apply for collaboration or job opportunities.
         </p>
 
-        {/* 🟣 Form Start */}
-        <form onSubmit={handleSubmit} className="space-y-5">
-
+        {/* 🟣 Form */}
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
           {/* 🔹 Name */}
           <input
             type="text"
@@ -75,7 +102,7 @@ export default function CareersPage() {
             value={form.name}
             onChange={handleChange}
             placeholder="Full Name"
-            className="w-full p-3 rounded-lg bg-black border border-gray-700 focus:border-purple-400 outline-none"
+            className="w-full p-3 rounded-lg bg-black border border-gray-700 focus:border-purple-400 outline-none text-sm sm:text-base"
             required
           />
 
@@ -86,7 +113,7 @@ export default function CareersPage() {
             value={form.email}
             onChange={handleChange}
             placeholder="Email Address"
-            className="w-full p-3 rounded-lg bg-black border border-gray-700 focus:border-purple-400 outline-none"
+            className="w-full p-3 rounded-lg bg-black border border-gray-700 focus:border-purple-400 outline-none text-sm sm:text-base"
             required
           />
 
@@ -95,7 +122,7 @@ export default function CareersPage() {
             name="skill"
             value={form.skill}
             onChange={handleChange}
-            className="w-full p-3 rounded-lg bg-black border border-gray-700 focus:border-purple-400 outline-none"
+            className="w-full p-3 rounded-lg bg-black border border-gray-700 focus:border-purple-400 outline-none text-sm sm:text-base"
             required
           >
             <option value="">Select Your Expertise</option>
@@ -113,7 +140,7 @@ export default function CareersPage() {
             value={form.resume}
             onChange={handleChange}
             placeholder="Resume Link (Google Drive, Dropbox, etc.)"
-            className="w-full p-3 rounded-lg bg-black border border-gray-700 focus:border-purple-400 outline-none"
+            className="w-full p-3 rounded-lg bg-black border border-gray-700 focus:border-purple-400 outline-none text-sm sm:text-base"
             required
           />
 
@@ -123,7 +150,7 @@ export default function CareersPage() {
             value={form.message}
             onChange={handleChange}
             placeholder="Why do you want to join AlphaDigital?"
-            className="w-full p-3 rounded-lg bg-black border border-gray-700 focus:border-purple-400 outline-none"
+            className="w-full p-3 rounded-lg bg-black border border-gray-700 focus:border-purple-400 outline-none resize-none text-sm sm:text-base"
             rows={4}
             required
           ></textarea>
