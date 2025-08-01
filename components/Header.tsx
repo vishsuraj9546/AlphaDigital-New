@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Orbitron } from 'next/font/google';  // ✅ Unique font import
 
 // ✅ Orbitron font load
 const orbitron = Orbitron({
   subsets: ['latin'],
-  weight: ['600', '700', '800'],  // multiple weights for flexibility
+  weight: ['600', '700', '800'],  
 });
 
 export default function Header() {
@@ -46,27 +47,35 @@ export default function Header() {
 
   return (
     <>
+      {/* ✅ HEADER */}
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled ? 'bg-black/80 backdrop-blur-md' : 'bg-transparent'
         }`}
       >
-        <div className="px-8 py-6">
+        <div className="px-6 py-4 md:px-8 md:py-6">
           <nav className="flex items-center justify-between">
-            
-            {/* ✅ Logo with new font */}
-            <div className={`text-3xl font-bold text-white ${orbitron.className}`}>
-              <Link
-                href="/"
-                className="hover:text-purple-400 transition-colors duration-300"
-              >
-                AlphaDigital
-              </Link>
-            </div>
 
-            {/* ✅ Top Menu */}
+            {/* ✅ COMPANY LOGO */}
+            <Link href="/" className="flex items-center space-x-3">
+              {/* ✅ Logo in Circle */}
+              <div className="relative w-12 h-12 rounded-full border-2 border-purple-400 p-1 hover:scale-110 hover:shadow-[0_0_15px_rgba(168,85,247,0.6)] transition-all duration-300">
+                <Image
+                  src="/icon.png"   // ✅ apni logo image yahan dalna
+                  alt="AlphaDigital Logo"
+                  fill
+                  className="object-cover rounded-full"
+                />
+              </div>
+
+              {/* ✅ Company name (optional hide on mobile) */}
+              <span className={`hidden sm:block text-2xl font-bold text-white ${orbitron.className}`}>
+                AlphaDigital
+              </span>
+            </Link>
+
+            {/* ✅ NAVIGATION LINKS */}
             <div className="hidden md:flex items-center space-x-8">
-              {/* Normal sections ke liye scroll */}
               {[
                 { id: 'about', label: 'ABOUT' },
                 { id: 'services', label: 'SERVICES' },
@@ -84,7 +93,6 @@ export default function Header() {
                 </button>
               ))}
 
-              {/* ✅ Careers button direct page pe le jayega */}
               <Link
                 href="/careers"
                 className="text-sm font-bold tracking-widest transition-all duration-300 hover:text-purple-400 cursor-pointer whitespace-nowrap text-white/70"
@@ -96,7 +104,7 @@ export default function Header() {
             {/* ✅ Start Project Button */}
             <button
               onClick={() => scrollToSection('contact')}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-full text-sm font-bold tracking-wide hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-300 cursor-pointer whitespace-nowrap"
+              className="hidden sm:block bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-full text-sm font-bold tracking-wide hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-300 cursor-pointer whitespace-nowrap"
             >
               START PROJECT
             </button>
@@ -104,47 +112,23 @@ export default function Header() {
         </div>
       </header>
 
-      {/* ✅ Side Scroll Navigation */}
-      <div className="fixed right-8 top-1/2 -translate-y-1/2 z-40 hidden lg:block">
-        <div className="flex flex-col items-center space-y-4">
-          {[
-            { id: 'hero', label: 'TOP' },
-            { id: 'about', label: 'ABOUT' },
-            { id: 'services', label: 'SERVICES' },
-            { id: 'portfolio', label: 'WORK' },
-            { id: 'contact', label: 'CONTACT' },
-          ].map((item) => (
-            <button
-              key={item.id}
-              onClick={() => scrollToSection(item.id)}
-              className="group flex items-center cursor-pointer"
-            >
-              <span
-                className={`text-xs font-bold tracking-widest transition-all duration-300 mr-3 ${
-                  activeSection === item.id ? 'text-purple-400' : 'text-white/40'
-                } group-hover:text-purple-400`}
-              >
-                {item.label}
-              </span>
-              <div
-                className={`w-8 h-0.5 transition-all duration-300 ${
-                  activeSection === item.id ? 'bg-purple-400' : 'bg-white/20'
-                } group-hover:bg-purple-400`}
-              />
-            </button>
-          ))}
-
-          {/* ✅ Careers ke liye Link (side nav pe bhi) */}
-          <Link
-            href="/careers"
-            className="group flex items-center cursor-pointer"
+      {/* ✅ MOBILE NAV (optional toggle later add karenge) */}
+      <div className="md:hidden fixed top-20 right-5 bg-black/90 rounded-xl shadow-lg p-3 space-y-3">
+        {['about', 'services', 'portfolio', 'contact'].map((item) => (
+          <button
+            key={item}
+            onClick={() => scrollToSection(item)}
+            className="block w-full text-left text-white/80 hover:text-purple-400 transition"
           >
-            <span className="text-xs font-bold tracking-widest transition-all duration-300 mr-3 text-white/70 group-hover:text-purple-400">
-              CAREERS
-            </span>
-            <div className="w-8 h-0.5 bg-white/20 group-hover:bg-purple-400 transition-all duration-300" />
-          </Link>
-        </div>
+            {item.toUpperCase()}
+          </button>
+        ))}
+        <Link
+          href="/careers"
+          className="block text-white/80 hover:text-purple-400 transition"
+        >
+          CAREERS
+        </Link>
       </div>
     </>
   );
