@@ -1,29 +1,23 @@
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { connectDB } from '@/lib/mongodb';
-import Contact from '@/models/Contact'; // ✅ FIXED PATH
+import Contact from '@/models/Contact';
 
 export async function POST(req: Request) {
   try {
-    // ✅ 1️⃣ Request se data nikalna
     const { name, email, message } = await req.json();
 
-    // ✅ 2️⃣ MongoDB connect karo
     await connectDB();
-
-    // ✅ 3️⃣ MongoDB me save karo
     await Contact.create({ name, email, message });
 
-    // ✅ 4️⃣ Nodemailer transporter setup
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.EMAIL_USER,  // ✅ Gmail email
-        pass: process.env.EMAIL_PASS,  // ✅ Gmail App Password
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
       },
     });
 
-    // ✅ 5️⃣ Email bhejna
     await transporter.sendMail({
       from: `"AlphaDigital Contact" <${process.env.EMAIL_USER}>`,
       to: process.env.EMAIL_USER,
@@ -37,18 +31,8 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true });
-
-  } catch (error: unknown) {
-    console.error("❌ API error:", error);
-
-    let errorMessage = "Unknown error";
-    if (error instanceof Error) {
-      errorMessage = error.message;
-    }
-
-    return NextResponse.json(
-      { success: false, error: errorMessage },
-      { status: 500 }
-    );
+  } catch (error) {
+    console.error('❌ API error:', error);
+    return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   }
 }
