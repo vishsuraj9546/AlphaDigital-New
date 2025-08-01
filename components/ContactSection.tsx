@@ -16,25 +16,20 @@ export default function ContactSection() {
   const [submitStatus, setSubmitStatus] = useState('');
   const sectionRef = useRef<HTMLElement>(null);
 
-  // 🟢 Scroll animation ke liye IntersectionObserver
+  // 🟢 Scroll animation
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
+        if (entry.isIntersecting) setIsVisible(true);
       },
       { threshold: 0.2 }
     );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
+    if (sectionRef.current) observer.observe(sectionRef.current);
     return () => observer.disconnect();
   }, []);
 
-  // 🟢 Input changes handle
+  // 🟢 Handle Input Change
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -43,7 +38,7 @@ export default function ContactSection() {
     }));
   };
 
-  // 🟢 Form submit function (API call)
+  // 🟢 Form Submit (API Call)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -55,7 +50,13 @@ export default function ContactSection() {
     }
 
     try {
-      const response = await fetch('/api/contact', {
+      // ✅ Correct API URL (auto-switch between local & production)
+      const apiUrl =
+        process.env.NODE_ENV === 'production'
+          ? 'https://alpha-digitalcom.vercel.app/api/contact' // 🔥 apna Vercel domain lagao
+          : '/api/contact';
+
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -112,29 +113,25 @@ export default function ContactSection() {
           {/* 🟣 Contact Form */}
           <form id="contact-form" onSubmit={handleSubmit} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Your Name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full bg-white/10 border border-white/20 rounded-xl px-6 py-4 text-white placeholder-white/50 focus:outline-none focus:border-purple-400 transition-colors duration-300"
-                />
-              </div>
+              <input
+                type="text"
+                name="name"
+                placeholder="Your Name"
+                value={formData.name}
+                onChange={handleInputChange}
+                required
+                className="w-full bg-white/10 border border-white/20 rounded-xl px-6 py-4 text-white placeholder-white/50 focus:outline-none focus:border-purple-400 transition-colors duration-300"
+              />
 
-              <div>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Your Email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full bg-white/10 border border-white/20 rounded-xl px-6 py-4 text-white placeholder-white/50 focus:outline-none focus:border-purple-400 transition-colors duration-300"
-                />
-              </div>
+              <input
+                type="email"
+                name="email"
+                placeholder="Your Email"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
+                className="w-full bg-white/10 border border-white/20 rounded-xl px-6 py-4 text-white placeholder-white/50 focus:outline-none focus:border-purple-400 transition-colors duration-300"
+              />
             </div>
 
             <div>

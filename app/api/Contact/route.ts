@@ -7,9 +7,18 @@ export async function POST(req: Request) {
   try {
     const { name, email, message } = await req.json();
 
+    // ✅ Validate fields
+    if (!name || !email || !message) {
+      return NextResponse.json({ success: false, error: 'Missing fields' }, { status: 400 });
+    }
+
+    // ✅ Connect to DB
     await connectDB();
+
+    // ✅ Save to DB
     await Contact.create({ name, email, message });
 
+    // ✅ Setup email transporter
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -18,6 +27,7 @@ export async function POST(req: Request) {
       },
     });
 
+    // ✅ Send email notification
     await transporter.sendMail({
       from: `"AlphaDigital Contact" <${process.env.EMAIL_USER}>`,
       to: process.env.EMAIL_USER,
@@ -33,6 +43,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('❌ API error:', error);
-    return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
+
+    return NextResponse.json(
+      { success: false, error: 'Internal Server Error' },
+      { status: 500 }
+    );
   }
 }
