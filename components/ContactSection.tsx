@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { toast, Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function ContactSection() {
   const [isVisible, setIsVisible] = useState(false);
@@ -11,10 +11,10 @@ export default function ContactSection() {
 
   // ✅ Scroll animation
   useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) setIsVisible(true);
-    }, { threshold: 0.2 });
-
+    const observer = new IntersectionObserver(
+      ([entry]) => entry.isIntersecting && setIsVisible(true),
+      { threshold: 0.2 }
+    );
     if (sectionRef.current) observer.observe(sectionRef.current);
     return () => observer.disconnect();
   }, []);
@@ -22,21 +22,25 @@ export default function ContactSection() {
   // ✅ Input change handler
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // ✅ Submit form with toast notifications
+  // ✅ Form submit handler
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     if (formData.message.length > 500) {
-      toast.error('⚠️ Message must be 500 characters or less.');
+      toast.error('⚠️ Message must be 500 characters or less.', {
+        style: { border: '1px solid #facc15', background: '#1a1a1a', color: '#facc15' },
+        icon: '⚠️',
+      });
       setIsSubmitting(false);
       return;
     }
 
     try {
+      // ✅ Localhost & Vercel ke liye URL auto switch
       const apiUrl =
         process.env.NODE_ENV === 'production'
           ? 'https://alpha-digitalcom.vercel.app/api/contact'
@@ -49,14 +53,23 @@ export default function ContactSection() {
       });
 
       if (response.ok) {
-        toast.success('✅ Message sent successfully! We’ll respond within 24 hours.');
+        toast.success('✅ Message sent successfully! 🎉', {
+          style: { border: '1px solid #4ade80', background: '#1a1a1a', color: '#4ade80' },
+          icon: '🚀',
+        });
         setFormData({ name: '', email: '', message: '' });
       } else {
-        toast.error('❌ Failed to send message. Please try again.');
+        toast.error('❌ Failed to send message. Please try again.', {
+          style: { border: '1px solid #ef4444', background: '#1a1a1a', color: '#ef4444' },
+          icon: '❌',
+        });
       }
     } catch (error) {
-      console.error('Form submit error:', error);
-      toast.error('⚠️ Server error. Try again later.');
+      console.error('❌ Form submit error:', error);
+      toast.error('⚠️ Server error. Try again later.', {
+        style: { border: '1px solid #facc15', background: '#1a1a1a', color: '#facc15' },
+        icon: '⚠️',
+      });
     }
 
     setIsSubmitting(false);
@@ -68,13 +81,11 @@ export default function ContactSection() {
       id="contact"
       className="py-32 bg-gradient-to-br from-purple-900 via-black to-pink-900"
     >
-      {/* ✅ Toast Notification System */}
       <Toaster position="top-center" reverseOrder={false} />
-
       <div className="max-w-7xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         
-        {/* ✅ LEFT SIDE - Robot (hidden on mobile) */}
-        <div className="relative justify-center hidden lg:flex">
+        {/* ✅ Left Side - Robot */}
+        <div className="relative flex justify-center">
           <iframe
             src="https://my.spline.design/genkubgreetingrobot-xFkiPyPgBmLyDrLtIESFj5Zt/"
             frameBorder="0"
@@ -84,7 +95,7 @@ export default function ContactSection() {
           ></iframe>
         </div>
 
-        {/* ✅ RIGHT SIDE - Contact Form */}
+        {/* ✅ Right Side - Contact Form */}
         <div>
           <div
             className={`text-center lg:text-left mb-16 transition-all duration-1000 ${
@@ -99,6 +110,7 @@ export default function ContactSection() {
             </h2>
           </div>
 
+          {/* ✅ Form */}
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <input
@@ -108,7 +120,7 @@ export default function ContactSection() {
                 value={formData.name}
                 onChange={handleInputChange}
                 required
-                className="w-full bg-white/10 border border-white/20 rounded-xl px-6 py-4 text-white placeholder-white/50 focus:outline-none focus:border-purple-400 transition-colors duration-300"
+                className="w-full bg-white/10 border border-white/20 rounded-xl px-6 py-4 text-white placeholder-white/50 focus:outline-none focus:border-purple-400 transition"
               />
               <input
                 type="email"
@@ -117,7 +129,7 @@ export default function ContactSection() {
                 value={formData.email}
                 onChange={handleInputChange}
                 required
-                className="w-full bg-white/10 border border-white/20 rounded-xl px-6 py-4 text-white placeholder-white/50 focus:outline-none focus:border-purple-400 transition-colors duration-300"
+                className="w-full bg-white/10 border border-white/20 rounded-xl px-6 py-4 text-white placeholder-white/50 focus:outline-none focus:border-purple-400 transition"
               />
             </div>
 
@@ -130,12 +142,10 @@ export default function ContactSection() {
                 value={formData.message}
                 onChange={handleInputChange}
                 required
-                className="w-full bg-white/10 border border-white/20 rounded-xl px-6 py-4 text-white placeholder-white/50 focus:outline-none focus:border-purple-400 transition-colors duration-300 resize-none"
+                className="w-full bg-white/10 border border-white/20 rounded-xl px-6 py-4 text-white placeholder-white/50 focus:outline-none focus:border-purple-400 transition resize-none"
               />
               <div className="text-right mt-2">
-                <span className="text-white/40 text-sm">
-                  {formData.message.length}/500
-                </span>
+                <span className="text-white/40 text-sm">{formData.message.length}/500</span>
               </div>
             </div>
 
@@ -143,12 +153,12 @@ export default function ContactSection() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="group relative bg-white text-black px-12 py-4 rounded-full text-lg font-bold tracking-wide transition-all duration-300 hover:shadow-2xl hover:shadow-white/20 disabled:opacity-50"
+                className="group relative bg-white text-black px-12 py-4 rounded-full text-lg font-bold tracking-wide transition hover:shadow-2xl hover:shadow-white/20 disabled:opacity-50"
               >
                 <span className="relative z-10">
                   {isSubmitting ? 'SENDING...' : 'SEND MESSAGE'}
                 </span>
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 opacity-0 group-hover:opacity-20 transition-opacity" />
               </button>
             </div>
           </form>

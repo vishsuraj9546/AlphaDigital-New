@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Pacifico } from "next/font/google";
 import "./globals.css";
+import Header from "@/components/Header";   // ✅ Yeh line add karo
 
-// ✅ Fonts setup
 const pacifico = Pacifico({
   weight: '400',
   subsets: ['latin'],
@@ -20,14 +20,9 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// ✅ Metadata API for title, description, favicon
 export const metadata: Metadata = {
   title: "Alpha Digital",
   description: "AI-powered Digital Solutions",
-  icons: {
-    icon: "/icon.png",
-    apple: "/icon.png",
-  },
 };
 
 export default function RootLayout({
@@ -40,6 +35,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${pacifico.variable} antialiased`}
       >
+        <Header />   
         {children}
       </body>
     </html>
