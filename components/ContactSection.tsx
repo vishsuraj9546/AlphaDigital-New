@@ -41,10 +41,10 @@ export default function ContactSection() {
 
     try {
       // ✅ Localhost & Vercel ke liye URL auto switch
-      const apiUrl =
-        process.env.NODE_ENV === 'production'
-          ? 'https://alpha-digitalcom.vercel.app/api/contact'
-          : '/api/contact';
+  const apiUrl = process.env.NODE_ENV === 'production'
+  ? 'https://alpha-digital-8t31r9z11-vishsuraj9546s-projects.vercel.app/api/contact'
+  : '/api/contact';
+
 
       const response = await fetch(apiUrl, {
         method: 'POST',
